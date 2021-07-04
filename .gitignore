@@ -1,1 +1,6 @@
 __pycache__/
+recording/
+localtest/
+*.jpeg
+*.json
+*.mp4

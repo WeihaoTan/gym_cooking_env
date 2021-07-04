@@ -38,7 +38,7 @@ class Game:
         #self.font = pygame.font.SysFont('arialttf', 10)
 
         pygame.init()
-        self.screen = pygame.display.set_mode((self.width, self.height))
+        #self.screen = pygame.display.set_mode((self.width, self.height))
 
 
 
@@ -59,6 +59,7 @@ class Game:
 
 
     def on_render(self):
+        self.screen = pygame.display.set_mode((self.width, self.height))
         self.screen.fill(Color.FLOOR)
         for x in range(self.env.xlen):
             for y in range(self.env.ylen):
@@ -120,6 +121,18 @@ class Game:
         pygame.display.flip()
         pygame.display.update()
 
+        #pygame.image.save(self.screen, "screenshot.jpeg")
+        img_int = pygame.PixelArray(self.screen)
+        img_rgb = np.zeros([img_int.shape[1], img_int.shape[0], 3], dtype=np.uint8)
+        for i in range(img_int.shape[0]):
+            for j in range(img_int.shape[1]):
+                color = pygame.Color(img_int[i][j])
+                img_rgb[j, i, 0] = color[1]
+                img_rgb[j, i, 1] = color[2]
+                img_rgb[j, i, 2] = color[3]
+        
+        return img_rgb
+
     def draw(self, path, size, location):
         image_path = '{}/{}.png'.format(graphics_dir, path)
         image = pygame.transform.scale(get_image(image_path), size)
@@ -158,7 +171,7 @@ class Game:
         for i in range(img_int.shape[0]):
             for j in range(img_int.shape[1]):
                 color = pygame.Color(img_int[i][j])
-                img_rgb[j, i, 0] = color.g
-                img_rgb[j, i, 1] = color.b
+                img_rgb[j, i, 0] = color.b
+                img_rgb[j, i, 1] = color.g
                 img_rgb[j, i, 2] = color.r
         return img_rgb

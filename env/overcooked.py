@@ -12,13 +12,13 @@ AGENTCOLOR = ["blue", "magenta", "green", "yellow"]
 TASKLIST = ["tomato salad", "lettuce salad", "tomato-lettuce salad"]
 
 
-class Overcooked_env(gym.Env):
+class Overcooked(gym.Env):
     metadata = {
         'render.modes': ['human', 'rgb_array'],
         'video.frames_per_second' : 50
         }
 
-    def __init__(self, grid_dim, map, task, rewardList):
+    def __init__(self, grid_dim, map, task, rewardList, debug = False):
 
         
         #action: move(up, down, left, right), stay
@@ -29,6 +29,7 @@ class Overcooked_env(gym.Env):
         self.map = map
         self.task = task
         self.rewardList = rewardList
+        self.debug = debug
 
         self.oneHotTask = []
         for t in TASKLIST:
@@ -72,7 +73,7 @@ class Overcooked_env(gym.Env):
                 elif self.map[x][y] == ITEMIDX["plate"]:
                     self.plate.append(Plate(x, y))
         
-        self.itemDic = {"agent": self.agent, "knife": self.knife, "delivery": self.delivery, "tomato": self.tomato, "lettuce": self.lettuce, "plate": self.plate}
+        self.itemDic = {"agent": self.agent, "tomato": self.tomato, "lettuce": self.lettuce, "plate": self.plate, "knife": self.knife, "delivery": self.delivery}
         for key in self.itemDic:
             self.itemList += self.itemDic[key]
 
@@ -108,6 +109,28 @@ class Overcooked_env(gym.Env):
 
         for agent in self.agent:
             agent.moved = False
+
+        if self.debug:
+            print("in overcooked primitive actions:", action)
+
+        if action[0] < 4 and action[1] < 4:
+            new_agent0_x = self.agent[0].x + DIRECTION[action[0]][0]
+            new_agent0_y =  self.agent[0].y + DIRECTION[action[0]][1] 
+
+            new_agent1_x =  self.agent[1].x + DIRECTION[action[1]][0]
+            new_agent1_y =  self.agent[1].y + DIRECTION[action[1]][1]    
+
+            if new_agent0_x == self.agent[1].x and new_agent0_y == self.agent[1].y\
+            and new_agent1_x == self.agent[0].x and new_agent1_y == self.agent[0].y:
+                self.agent[0].move(new_agent0_x, new_agent0_y)
+                self.agent[1].move(new_agent1_x, new_agent1_y)
+                if self.debug:
+                    print("swap")
+                return self._getObs(), reward, done, info
+
+
+            
+
 
         while not all_action_done:
             for idx, agent in enumerate(self.agent):
@@ -234,7 +257,7 @@ class Overcooked_env(gym.Env):
         return self._getObs(), reward, done, info
 
     def render(self, mode='human'):
-        self.game.on_render()
+        return self.game.on_render()
 
     
 

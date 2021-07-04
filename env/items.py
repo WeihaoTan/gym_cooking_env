@@ -142,6 +142,7 @@ class Agent(MovableItem):
 
     def pickup(self,item):
         self.holding = item
+        item.move(self.x, self.y)
     
     def putdown(self, x, y):
         self.holding.move(x, y)
@@ -152,5 +153,4 @@ class Agent(MovableItem):
         self.moved = True
         if self.holding:
             self.holding.move(x, y)
-
 

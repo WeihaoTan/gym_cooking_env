@@ -2,7 +2,7 @@ import os
 import sys
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 
-from env.overcooked_env import Overcooked_env
+from env.overcooked import Overcooked
 
 import random
 import time
@@ -36,10 +36,14 @@ task = "tomato salad"
 
 rewardList = {"subtask finished": 10, "correct delivery": 100, "wrong delivery": -100}
 
-env = Overcooked_env(grid_dim, map, task, rewardList)
+env = Overcooked(grid_dim, map, task, rewardList, debug=True)
 
 observation = env.reset()
+done = False
 while(True):
+    if done:
+        break
+
     env.render()
 
     a0 = 5
