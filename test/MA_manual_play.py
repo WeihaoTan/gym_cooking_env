@@ -2,13 +2,11 @@ import os
 import sys
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 
-from env.overcooked import Overcooked
-from env.overcooked_MA import Overcooked_MA, MacEnvWrapper
+import gym
+import env
+from env.macActEnvWrapper import MacEnvWrapper
 
 import random
-import time
-import pygame
-from pygame.locals import *
 from gym.wrappers.monitoring.video_recorder import VideoRecorder
 
 
@@ -37,8 +35,16 @@ task = "tomato salad"
 #task = "lettuce salad"
 
 rewardList = {"subtask finished": 10, "correct delivery": 100, "wrong delivery": -100}
+debug = True
 
-env = Overcooked_MA(grid_dim, map, task, rewardList, debug=True)
+env_params = {'grid_dim': grid_dim,
+                'map': map,
+                'task': task,
+                'rewardList': rewardList,
+                'debug': debug
+                }
+
+env = gym.make("Overcooked-MA-v0", **env_params)
 env = MacEnvWrapper(env)
 
 #                     0       1       2       3     4          5             6               7              8               9              10              11       12
@@ -47,7 +53,7 @@ MACROACTIONNAME = ["right", "down", "left", "up", "stay", "get tomato", "get let
 # video_recorder = None
 # video_recorder = VideoRecorder(env, "video.mp4", enabled=True)
 
-observation = env.reset()                         
+observation = env.reset()                          
 
 while(True):
     env.render()

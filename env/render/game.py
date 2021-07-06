@@ -1,8 +1,12 @@
 import os
+import sys
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '../..')))
+
 import pygame
 import numpy as np
 from env.render.utils import *
 from env.items import Tomato, Lettuce, Plate, Knife, Delivery, Agent, Food
+
 
 graphics_dir = 'env/render/graphics'
 _image_library = {}
@@ -102,7 +106,7 @@ class Game:
                     fill = pygame.Rect(sl[0], sl[1], self.scale, self.scale)
                     pygame.draw.rect(self.screen, Color.COUNTER, fill)
                     pygame.draw.rect(self.screen, Color.COUNTER_BORDER, fill, 1)
-                    self.draw('Plate', self.tile_size, sl)
+                    self.draw('plate', self.tile_size, sl)
                     for p in self.env.plate:
                         if p.x == x and p.y == y:
                             if p.containing:
@@ -113,7 +117,7 @@ class Game:
                             self.draw('agent-{}'.format(agent.color), self.tile_size, sl)
                             if agent.holding:
                                 if isinstance(agent.holding, Plate):
-                                    self.draw('Plate', self.holding_size, self.holding_location((y, x)))
+                                    self.draw('plate', self.holding_size, self.holding_location((y, x)))
                                     if agent.holding.containing:
                                         self.draw(agent.holding.containedName, self.holding_container_size, self.holding_container_location((y, x)))
                                 else:
@@ -175,3 +179,7 @@ class Game:
                 img_rgb[j, i, 1] = color.g
                 img_rgb[j, i, 2] = color.r
         return img_rgb
+
+
+if __name__ == '__main__':
+    print(sys.path)

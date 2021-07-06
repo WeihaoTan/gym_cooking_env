@@ -52,6 +52,9 @@ class Overcooked_MA(Overcooked):
         self._createMacroAgents()
         self.macroActionItemList = []
         self._createMacroActionItemList()
+        self.action_space = spaces.Discrete(13)
+
+
 
     def _createMacroAgents(self):
         for agent in self.agent:
@@ -114,10 +117,6 @@ class Overcooked_MA(Overcooked):
                 self.macroAgent[idx].cur_macro_action_done = False
             else:
                 macro_action = self.macroAgent[idx].cur_macro_action
-            
-            # print("agent-{color} ".format(color = agent.color))    
-            # print(self.macroAgent[idx].cur_macro_action_done, MACROACTIONNAME[macro_actions[idx]], MACROACTIONNAME[self.macroAgent[idx].cur_macro_action])
-            
 
             primitive_action = ACTIONIDX["stay"]
 
@@ -232,35 +231,3 @@ class Overcooked_MA(Overcooked):
     def get_avail_actions(self):
         # return list[1….]
         return [True for i in self.agent]
-
-
-
-
-
-class MacEnvWrapper(Wrapper):
-    def __init__(self, env):
-        super(MacEnvWrapper, self).__init__(env)
-
-    @property
-    def n_agent(self): return 2
-
-    @property
-    def obs_size(self): return
-
-    @property
-    def n_action(self): return
-
-    def reset(self): self.env.reset()
-
-    def step(self, macro_actions):
-    
-        obs, reward, done, info = self.env.run(macro_actions)
-          
-        return obs, reward, done, info
-
-    def action_space_sample(self):
-        return self.env.macro_action_sample() 
-
-    def get_avail_actions(self):
-        return self.env.get_avail_actions()
-

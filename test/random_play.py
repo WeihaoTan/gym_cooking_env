@@ -2,12 +2,11 @@ import os
 import sys
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 
-from env.overcooked import Overcooked
+import env
+import gym
 
 import random
 import time
-import pygame
-from pygame.locals import *
 
 
 #0:space, 1: counter 2: agent, 3: tomato, 4: lettuce, 5: plate, 6: knife, 7: delivery
@@ -35,12 +34,21 @@ task = "tomato salad"
 #task = "lettuce salad"
 
 rewardList = {"subtask finished": 10, "correct delivery": 100, "wrong delivery": -100}
+debug = True
 
-env = Overcooked(grid_dim, map, task, rewardList, debug=True)
+env_params = {'grid_dim': grid_dim,
+                'map': map,
+                'task': task,
+                'rewardList': rewardList,
+                'debug': debug
+                }
+
+env = gym.make("Overcooked-v0", **env_params)
+
 
 observation = env.reset()
 while(True):
-    #env.render()
+    env.render()
 
     a0 = random.randint(0, 5)
     a1 = random.randint(0, 5)

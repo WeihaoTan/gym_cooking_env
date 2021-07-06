@@ -20,9 +20,6 @@ class Overcooked(gym.Env):
 
     def __init__(self, grid_dim, map, task, rewardList, debug = False):
 
-        
-        #action: move(up, down, left, right), stay
-        self.action_space = spaces.Discrete(5)
 
         self.xlen, self.ylen = grid_dim
         self.game = Game(self)
@@ -40,11 +37,19 @@ class Overcooked(gym.Env):
 
         self._createItems()
 
+
+        #action: move(up, down, left, right), stay
+        self.action_space = spaces.Discrete(5)
+
         #Observation: agent(pos[x,y]) dim = 2
         #    knife(pos[x,y]) dim = 2
         #    delivery (pos[x,y]) dim = 2
         #    plate(pos[x,y]) dim = 2
         #    food(pos[x,y]/status) dim = 3
+        self.observation_space = spaces.Box(low=0, high=1, shape=(len(self._getObs()),), dtype=np.float32)
+
+
+        self.n_agent = len(self.agent)
         
 
 
@@ -77,8 +82,6 @@ class Overcooked(gym.Env):
         for key in self.itemDic:
             self.itemList += self.itemDic[key]
 
-        
-        self.observation_space = spaces.Discrete(len(self._getObs()))
 
     def _getObs(self):
         obs = []
@@ -94,6 +97,19 @@ class Overcooked(gym.Env):
         for item in self.itemDic[itemName]:
             if item.x == x and item.y == y:
                 return item
+
+
+    @property
+    def obs_size(self):
+        return [self.observation_space.shape[0]] * self.n_agent
+
+    @property
+    def n_action(self):
+        return [a.n for a in self.action_spaces]
+
+    @property
+    def action_spaces(self):
+        return [self.action_space] * self.n_agent
 
     def reset(self):
         self._createItems()
@@ -216,12 +232,12 @@ class Overcooked(gym.Env):
                                         reward += self.rewardList["correct delivery"]
                                         done = True
                                     elif len(agent.holding.containing) == 1 and \
-                                        (agent.holding.containing[0].rawName == "tomato" and self.task == "tomato salad" \
-                                        or agent.holding.containing[0].rawName == "lettuce" and self.task == "lettuce salad"):
+                                        ((agent.holding.containing[0].rawName == "tomato" and self.task == "tomato salad") \
+                                        or (agent.holding.containing[0].rawName == "lettuce" and self.task == "lettuce salad")):
                                         reward += self.rewardList["correct delivery"]
                                         done = True
                                     else:
-                                        reward -= self.rewardList["wrong delivery"]
+                                        reward += self.rewardList["wrong delivery"]
                                         item = agent.holding
                                         agent.putdown(target_x, target_y)
                                         food = item.containing
